@@ -5,25 +5,53 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchUser } from '../redux/actions/index'
 
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+
+const Tab = createMaterialBottomTabNavigator();
+
+import FeedScreen from './main/feed'
+import ProfileScreen from './main/profile';
+import { Feather } from '@expo/vector-icons';
+
+const EmptyScreen = () => {
+    return(null)
+}
 export class main extends Component {
     componentDidMount() {
         this.props.fetchUser();
     }
     render() {
-        const { currentUser } = this.props;
-        if(currentUser == undefined){
-            return(
-                <View style = {{flex:1 , justifyContent: 'center', alignItems:'center'}}> 
-                    <ActivityIndicator size="large" color = "#f44336" />
-                </View>
-            )
-        }
         return (
-            <View style = {{flex:1 , justifyContent: 'center', alignItems:'center'}}> 
-                <Text>{currentUser.name} is Logged in..</Text>
-            </View>
+            <Tab.Navigator initialRouteName="Feed" barStyle={{ backgroundColor: 'white' }} labeled={false} activeColor="red">
+                <Tab.Screen name="Feed" component={FeedScreen} 
+                options={{
+                    tabBarIcon: ({color, size}) => (
+                        <Feather name="home" size={24} color={color}/>
+                    )
+                }} />
+
+                <Tab.Screen name="AddContainer" component={EmptyScreen} 
+                listeners={({ navigation }) => ({
+                    tabPress: event => {
+                        event.preventDefault();
+                        navigation.navigate("Upload")
+                    }
+                })}
+                options={{
+                    tabBarIcon: ({color, size}) => (
+                        <Feather name="upload" size={24} color={color} />
+                    )
+                }} />
+
+                <Tab.Screen name="Profile" component={ProfileScreen} 
+                options={{
+                    tabBarIcon: ({color, size}) => (
+                        <Feather name="user" size={24} color={color}/>
+                    )
+                }} />
+            </Tab.Navigator>
         )
-    }
+    }                           
 }
 const mapStateToProps = (store) => ({
     currentUser: store.userState.currentUser

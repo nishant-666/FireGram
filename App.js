@@ -5,6 +5,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 const Stack = createStackNavigator();
 import * as firebase from 'firebase';
+import 'firebase/firestore';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import rootReducer from './redux/reducers';
@@ -29,7 +30,8 @@ if(firebase.apps.length === 0){
 import HomeScreen from './components/auth/Home';
 import RegisterScreen from './components/auth/Register';
 import MainScreen from './components/main';
-
+import UploadScreen from './components/main/upload'
+import SaveScreen from './components/main/save'
 export class App extends Component {
   constructor(props){
     super(props);
@@ -81,7 +83,13 @@ export class App extends Component {
     }
     return(
       <Provider store={store}> 
-        <MainScreen/>
+       <NavigationContainer>
+        <Stack.Navigator initialRouteName = "Main">
+            <Stack.Screen name = "Main" component = {MainScreen} options={{headerShown: false}}/>
+            <Stack.Screen name = "Upload" component = {UploadScreen} navigation = {this.props.navigation}/>
+            <Stack.Screen name = "Save" component = {SaveScreen}/>
+        </Stack.Navigator>
+        </NavigationContainer>
       </Provider>
     )
   }
